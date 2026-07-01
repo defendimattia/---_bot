@@ -1,28 +1,38 @@
 from core.terminal import console
 from core.config import TITLE
 
+
 class Menu:
 
     def run(self):
 
+        show_error = False
+
         while True:
 
-            print(f"\n===== {TITLE} Bot =====")
-            print("1. Visualizza annunci")
-            print("2. Ripubblica annunci")
-            print("3. Esci")
+            console.clear()
+            console.print("[bold green]" + TITLE.replace("\\n", "\n") + "[/bold green]")
+            print("=" * 60)
+            print("1. View listings")
+            print("2. Relist listings")
+            print("3. Exit")
+            print("=" * 60)
 
-            scelta = input("\nScelta: ")
+            if show_error:
+                console.print("[bold red]Invalid choice[/bold red]\n")
+                show_error = False
 
-            if scelta == "1":
+            choice = input("\nChoice: ")
+
+            if choice == "1":
                 self.show_listings()
 
-            elif scelta == "2":
+            elif choice == "2":
                 self.republish_listing()
 
-            elif scelta == "3":
+            elif choice == "3":
                 break
 
             else:
+                show_error = True
                 console.clear()
-                console.print("[bold][red]Scelta non valida[/red][/bold]\n")
