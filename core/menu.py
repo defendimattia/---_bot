@@ -1,5 +1,6 @@
 from core.terminal import console
 from core.config import TITLE
+from core.listings import view_listings
 
 
 class Menu:
@@ -25,10 +26,11 @@ class Menu:
             choice = input("\nChoice: ")
 
             if choice == "1":
-                self.show_listings()
+                console.clear()
+                view_listings()
 
             elif choice == "2":
-                self.republish_listing()
+                self.relist_listing()
 
             elif choice == "3":
                 break
