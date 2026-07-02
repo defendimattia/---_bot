@@ -1,6 +1,8 @@
 from core.terminal import console
-from core.config import TITLE
+from core.config import TITLE, SELENIUM_PROFILE
 from core.listings import view_listings
+from core.auth.selenium_session import setup_selenium_login
+
 
 
 class Menu:
@@ -27,6 +29,10 @@ class Menu:
 
             if choice == "1":
                 console.clear()
+                            
+                if not SELENIUM_PROFILE.exists() or not any(SELENIUM_PROFILE.iterdir()):
+                    setup_selenium_login()
+
                 view_listings()
 
             elif choice == "2":

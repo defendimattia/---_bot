@@ -1,0 +1,73 @@
+from selenium import webdriver
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from core.config import URL, SELENIUM_PROFILE
+
+
+def fetch_listings():
+
+    options = Options()
+
+    options.add_argument(f"--user-data-dir={SELENIUM_PROFILE}")
+    options.add_argument("--start-maximized")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option("useAutomationExtension", False)
+
+    browser = webdriver.Chrome(options=options)
+
+    browser.execute_script(
+        "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+    )
+
+    browser.get(URL)
+
+    wait = WebDriverWait(browser, 20)
+
+    menu_button = wait.until(
+        EC.element_to_be_clickable((By.ID, "user-menu-button"))
+    )
+    menu_button.click()
+
+    profile_link = wait.until(
+        EC.element_to_be_clickable((By.LINK_TEXT, "Profilo"))
+    )
+    profile_link.click()
+
+    wait.until(
+        EC.presence_of_all_elements_located((By.CSS_SELECTOR, "[data-testid='grid-item']"))
+    )
+
+    items = browser.find_elements(By.CSS_SELECTOR, "[data-testid='grid-item']")
+
+    listings = []
+
+    for item in items:
+        try:
+            title = item.find_element(
+            By.CSS_SELECTOR,
+            "a.new-item-box__overlay--clickable"
+            ).get_attribute("title").split(",")[0].strip()
+
+            price_el = item.find_element(
+                By.CSS_SELECTOR,
+                "[data-testid$='--price-text']"
+            )
+
+            listings.append({
+                "title": title,
+                "price": price_el.text
+            })
+
+        except Exception:
+            continue
+
+    browser.quit()
+
+    return listings
+
+
+
