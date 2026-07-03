@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from core.config import URL, SELENIUM_PROFILE
 from core.terminal import console
+from selenium.common.exceptions import NoSuchElementException
 
 
 def fetch_listings():
@@ -17,8 +18,6 @@ def fetch_listings():
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("useAutomationExtension", False)
-
-
 
     try:
         with console.status("Starting browser and navigating to profile..."):
@@ -49,14 +48,14 @@ def fetch_listings():
         console.print(f"❌ Error during browser navigation: {e}", style="bold red")
         browser.quit()
         return []
-    
-
 
     try:
         with console.status("Loading and extracting items..."):
 
             wait.until(
-                EC.presence_of_all_elements_located((By.CSS_SELECTOR, "[data-testid='grid-item']"))
+                EC.presence_of_all_elements_located(
+                    (By.CSS_SELECTOR, "[data-testid='grid-item']")
+                )
             )
 
             items = browser.find_elements(By.CSS_SELECTOR, "[data-testid='grid-item']")
@@ -65,34 +64,31 @@ def fetch_listings():
 
             for item in items:
                 try:
-                    title = item.find_element(
-                    By.CSS_SELECTOR,
-                    "a.new-item-box__overlay--clickable"
-                    ).get_attribute("title").split(",")[0].strip()
-
-                    price_el = item.find_element(
-                        By.CSS_SELECTOR,
-                        "[data-testid$='--price-text']"
+                    title = (
+                        item.find_element(
+                            By.CSS_SELECTOR, "a.new-item-box__overlay--clickable"
+                        )
+                        .get_attribute("title")
+                        .split(",")[0]
+                        .strip()
                     )
 
-                    listings.append({
-                        "title": title,
-                        "price": price_el.text
-                    })
+                    price_el = item.find_element(
+                        By.CSS_SELECTOR, "[data-testid$='--price-text']"
+                    )
 
-                except Exception:
+                    listings.append({"title": title, "price": price_el.text})
+
+                except NoSuchElementException:
                     continue
-        
+
         console.print(f"✔ Data extracted: {len(listings)} items", style="bold green")
 
     except Exception as e:
         console.print(f"❌ Error during browser navigation: {e}", style="bold red")
-        browser.quit()
         return []
-
-    browser.quit()
+    
+    finally:
+        browser.quit()
 
     return listings
-
-
-
