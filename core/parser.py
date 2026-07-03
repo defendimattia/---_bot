@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from core.config import URL, SELENIUM_PROFILE
 from core.terminal import console
 from selenium.common.exceptions import NoSuchElementException
+from core.automation import scroll_to_bottom
 
 
 def fetch_listings():
@@ -57,6 +58,8 @@ def fetch_listings():
                     (By.CSS_SELECTOR, "[data-testid='grid-item']")
                 )
             )
+
+            scroll_to_bottom(browser)
 
             items = browser.find_elements(By.CSS_SELECTOR, "[data-testid='grid-item']")
 
