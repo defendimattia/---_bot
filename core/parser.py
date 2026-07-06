@@ -14,7 +14,11 @@ def fetch_listings():
     options = Options()
 
     options.add_argument(f"--user-data-dir={SELENIUM_PROFILE}")
-    options.add_argument("--start-maximized")
+    options.add_argument("--headless=new")
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-extensions")
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -65,8 +69,17 @@ def fetch_listings():
 
             listings = []
 
-            for item in items:
+            for i, item in enumerate(items, start=1):
+
                 try:
+                    real_id = (
+                        item.find_element(
+                            By.CSS_SELECTOR, "a.new-item-box__overlay--clickable"
+                        )
+                        .get_attribute("href")
+                        .split("/")[-1]
+                    )
+
                     title = (
                         item.find_element(
                             By.CSS_SELECTOR, "a.new-item-box__overlay--clickable"
@@ -79,8 +92,7 @@ def fetch_listings():
                     status = ""
                     try:
                         status = item.find_element(
-                            By.CSS_SELECTOR,
-                            "[data-testid$='--status-text']"
+                            By.CSS_SELECTOR, "[data-testid$='--status-text']"
                         ).text.strip()
                     except NoSuchElementException:
                         pass
@@ -92,7 +104,15 @@ def fetch_listings():
                         By.CSS_SELECTOR, "[data-testid$='--price-text']"
                     )
 
-                    listings.append({"title": title, "price": price_el.text})
+                    listings.append(
+                        {
+                            "id": real_id,
+                            "short_id": str(i),
+                            "title": title,
+                            "price": price_el.text,
+                            "status": status,
+                        }
+                    )
 
                 except NoSuchElementException:
                     continue
@@ -102,7 +122,7 @@ def fetch_listings():
     except Exception as e:
         console.print(f"❌ Error during browser navigation: {e}", style="bold red")
         return []
-    
+
     finally:
         browser.quit()
 

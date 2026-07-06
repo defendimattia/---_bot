@@ -20,9 +20,9 @@ def view_listings():
             table.add_column("Title")
             table.add_column("Price", justify="right", style="green", width=10)
 
-            for i, item in enumerate(listings, start=1):
+            for item in listings:
                 table.add_row(
-                    str(i),
+                    item["short_id"],
                     item["title"],
                     item["price"]
                 )
