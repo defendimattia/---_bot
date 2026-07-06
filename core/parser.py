@@ -76,6 +76,18 @@ def fetch_listings():
                         .strip()
                     )
 
+                    status = ""
+                    try:
+                        status = item.find_element(
+                            By.CSS_SELECTOR,
+                            "[data-testid$='--status-text']"
+                        ).text.strip()
+                    except NoSuchElementException:
+                        pass
+
+                    if status:
+                        title = f"[{status}] {title}"
+
                     price_el = item.find_element(
                         By.CSS_SELECTOR, "[data-testid$='--price-text']"
                     )
