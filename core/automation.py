@@ -28,5 +28,29 @@ def scroll_to_bottom(browser, timeout=5):
 
 
 def random_mouse_move(browser):
-    elements = browser.find_elements(By.CSS_SELECTOR, "a, button, div, img")
-    ActionChains(browser).move_to_element(random.choice(elements)).perform()
+    elements = browser.find_elements(By.CSS_SELECTOR, "a, button, img")
+
+    visible_elements = []
+
+    for element in elements:
+        try:
+            if (
+                element.is_displayed()
+                and element.size["width"] > 0
+                and element.size["height"] > 0
+            ):
+                visible_elements.append(element)
+        except:
+            pass
+
+    if not visible_elements:
+        return
+
+    element = random.choice(visible_elements)
+
+    try:
+        ActionChains(browser).move_to_element(element).pause(
+            random.uniform(0.2, 0.8)
+        ).perform()
+    except Exception:
+        pass
