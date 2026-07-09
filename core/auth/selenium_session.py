@@ -33,9 +33,9 @@ def setup_selenium_login():
     Note: Only required on first run.
     """
 
-    print("\n" + "=" * 70)
+    print("\n" + "=" * 60)
     print(message)
-    print("=" * 70 + "\n")
+    print("=" * 60 + "\n")
 
     input("\nPress ENTER after completing login...")
     console.clear()

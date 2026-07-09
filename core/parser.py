@@ -25,7 +25,7 @@ def fetch_listings():
     options.add_experimental_option("useAutomationExtension", False)
 
     try:
-        with console.status("Starting browser and navigating to profile..."):
+        with console.status(" Starting browser and navigating to profile..."):
 
             browser = webdriver.Chrome(options=options)
 
@@ -47,15 +47,15 @@ def fetch_listings():
             )
             profile_link.click()
 
-        console.print("✔ Browser started and profile reached", style="bold green")
+        console.print("✔  Browser started and profile reached", style="bold green")
 
     except Exception as e:
-        console.print(f"❌ Error during browser navigation: {e}", style="bold red")
+        console.print(f"❌  Error during browser navigation: {e}", style="bold red")
         browser.quit()
         return []
 
     try:
-        with console.status("Loading and extracting items..."):
+        with console.status(" Loading and extracting items..."):
 
             wait.until(
                 EC.presence_of_all_elements_located(
@@ -117,10 +117,10 @@ def fetch_listings():
                 except NoSuchElementException:
                     continue
 
-        console.print(f"✔ Data extracted: {len(listings)} items", style="bold green")
+        console.print(f"✔  Data extracted: {len(listings)} items", style="bold green")
 
     except Exception as e:
-        console.print(f"❌ Error during browser navigation: {e}", style="bold red")
+        console.print(f"❌  Error during browser navigation: {e}", style="bold red")
         return []
 
     finally:

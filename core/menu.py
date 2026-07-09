@@ -1,13 +1,15 @@
 from core.terminal import console
-from core.config import TITLE, SELENIUM_PROFILE
+from core.config import TITLE
 from core.listings import view_listings
-from core.auth.selenium_session import setup_selenium_login
 from core.relist.by_id import relist_by_id
-
+from core.parser import fetch_listings
 
 class Menu:
 
     def run(self):
+
+        console.clear()
+        listings = fetch_listings()
 
         show_error = False
 
@@ -28,15 +30,11 @@ class Menu:
             choice = input("\nChoice: ")
 
             if choice == "1":
+
                 console.clear()
-
-                if not SELENIUM_PROFILE.exists() or not any(SELENIUM_PROFILE.iterdir()):
-                    setup_selenium_login()
-
-                view_listings()
+                view_listings(listings)
 
             elif choice == "2":
-
                 while True:
 
                     console.clear()
@@ -55,7 +53,7 @@ class Menu:
 
                     if choice == "1":
                         console.clear()
-                        relist_by_id()
+                        relist_by_id(listings)
 
                     elif choice == "2":
                         pass
