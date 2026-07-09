@@ -18,7 +18,6 @@ def view_listings(listings):
     for item in listings:
         table.add_row(item["short_id"], item["title"], item["price"])
 
-    console.print("✔ Table created", style="bold green")
     console.print(table)
 
     input("\nPress ENTER to return to menu...")

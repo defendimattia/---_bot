@@ -3,8 +3,7 @@ import requests
 
 
 def save_images(image_urls, listing_id):
-    folder = os.path.join("temp", "images", str(listing_id))
-
+    folder = os.path.join("temp", str(listing_id))
     os.makedirs(folder, exist_ok=True)
 
     saved_files = []

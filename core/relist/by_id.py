@@ -6,6 +6,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from core.relist.extract_listing_data import extract_listing_data
 from core.terminal import console
+from core.relist.save_listing_data import save_listing_data
+from core.relist.image_downloader import save_images
+
 
 def relist_by_id(listings):
 
@@ -32,8 +35,7 @@ def relist_by_id(listings):
 
             browser.execute_script(
                 "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
-                    )
-
+            )
 
             item_to_relist = listings[choice - 1]
 
@@ -42,26 +44,26 @@ def relist_by_id(listings):
             wait = WebDriverWait(browser, 20)
 
             edit_button = wait.until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='item-edit-button']"))
+                EC.element_to_be_clickable(
+                    (By.CSS_SELECTOR, "[data-testid='item-edit-button']")
+                )
             )
             edit_button.click()
 
             data = extract_listing_data(browser, item_to_relist["id"])
 
+            data["images"] = save_images(data.pop("image_urls"), item_to_relist["id"])
 
-            browser.quit()
+            save_listing_data(data, item_to_relist["id"])
 
         console.print("✔  Listing data extracted", style="bold green")
 
-        print("\n")
-        print(data)
-
-        input("fine")
-
     except Exception as e:
-        console.print(
-            f"❌  Error while extracting listing data: {e}",
-            style="bold red"
-        )
-        browser.quit()
+        console.print(f"❌  Error while extracting listing data: {e}", style="bold red")
         return
+
+    finally:
+        if browser:
+            browser.quit()
+
+    input("\nPress ENTER to return to menu...")

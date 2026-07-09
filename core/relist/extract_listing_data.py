@@ -1,6 +1,4 @@
 from selenium.webdriver.common.by import By
-from core.relist.image_downloader import save_images
-
 
 def extract_listing_data(browser, listing_id):
 
@@ -53,6 +51,6 @@ def extract_listing_data(browser, listing_id):
         for img in images
     ]
 
-    listing["images"] = save_images(image_urls, listing_id)
+    listing["image_urls"] = image_urls
 
     return listing
