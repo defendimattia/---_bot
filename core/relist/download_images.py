@@ -2,7 +2,7 @@ import os
 import requests
 
 
-def save_images(image_urls, listing_id):
+def download_images(image_urls, listing_id):
     folder = os.path.join("temp", str(listing_id))
     os.makedirs(folder, exist_ok=True)
 
